@@ -9,6 +9,9 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "test": "vitest",
+    "ionic": "bunx @ionic/cli",
+    "cap:sync": "bunx cap sync",
+    "dev:ios": "bun dev & bun ionic capacitor run ios --livereload-url=http://localhost:3000  --external --mode development",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
     "test:unit": "vitest --project unit",
@@ -17,6 +20,12 @@
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
+    "@capacitor/app": "8.0.0",
+    "@capacitor/core": "8.0.1",
+    "@capacitor/haptics": "8.0.0",
+    "@capacitor/ios": "8.0.1",
+    "@capacitor/keyboard": "8.0.0",
+    "@capacitor/status-bar": "8.0.0",
     "@nuxt/eslint": "1.12.1",
     "@nuxt/fonts": "0.12.1",
     "@nuxt/hints": "1.0.0-alpha.5",
@@ -30,6 +39,7 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@capacitor/cli": "8.0.1",
     "@playwright/test": "^1.57.0",
     "@vitest/coverage-v8": "^4.0.17",
     "@vue/test-utils": "^2.4.6",

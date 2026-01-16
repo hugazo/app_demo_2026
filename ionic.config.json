@@ -1,5 +1,7 @@
 {
   "name": "qr_app",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "vue"
 }
