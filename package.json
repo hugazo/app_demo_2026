@@ -6,7 +6,7 @@
     "build": "nuxt build",
     "dev": "nuxt dev --dotenv .env.local",
     "dev:local": "bun dev & bun dev:convex",
-    "dev:local:ios": "bun dev & bun dev:convex & dev:ios",
+    "dev:local:ios": "bun dev & bun dev:convex & bun dev:ios",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
