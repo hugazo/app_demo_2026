@@ -1,7 +1,7 @@
 import { query, mutation } from './_generated/server';
 import { v } from 'convex/values';
 
-export const get = query({
+export const getAll = query({
   args: {},
   handler: async (ctx) => {
     return await ctx.db.query('tasks').collect();
@@ -28,11 +28,11 @@ export const getCompleted = query({
   },
 });
 
-export const complete = mutation({
-  args: { id: v.id('tasks') },
+export const updateCompletionStatus = mutation({
+  args: { id: v.id('tasks'), isCompleted: v.boolean() },
   handler: async (ctx, args) => {
-    const { id } = args;
-    await ctx.db.patch('tasks', id, { isCompleted: true });
+    const { id, isCompleted } = args;
+    await ctx.db.patch('tasks', id, { isCompleted });
   },
 });
 
