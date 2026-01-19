@@ -12,6 +12,11 @@ export default defineNuxtConfig({
   // Forces SPA Mode, needed for Ionic Framework
   ssr: false,
   devtools: { enabled: true },
+  runtimeConfig: {
+    public: {
+      convexSiteUrl: process.env.CONVEX_SITE_URL,
+    },
+  },
   compatibilityDate: '2025-07-15',
   convex: {
     url: process.env.CONVEX_URL,
@@ -22,5 +27,8 @@ export default defineNuxtConfig({
         semi: true,
       },
     },
+  },
+  hints: {
+    hydration: false,
   },
 });
