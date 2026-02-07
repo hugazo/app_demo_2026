@@ -1,19 +1,37 @@
-import { createAuthClient } from 'better-auth/vue';
-import { convexClient } from '@convex-dev/better-auth/client/plugins';
-
 export default () => {
-  const config = useRuntimeConfig();
-  const baseURL = config.public.convexSiteUrl;
+  const { successToast, errorToast } = useToast();
 
-  const authClient = createAuthClient({
-    fetchOptions: {
-      credentials: 'include',
-    },
-    baseURL,
-    plugins: [convexClient()],
-  });
+  const client = useAuthClient();
+
+  const handleLogin = async (args: {
+    email: string;
+    password: string;
+    callbackURL?: string;
+    rememberMe?: boolean;
+  }) => {
+    const result = await client.signIn.email({
+      email: args.email,
+      password: args.password,
+      callbackURL: args.callbackURL,
+      rememberMe: args.rememberMe,
+    });
+
+    if (result.error?.message) {
+      await errorToast(result.error.message);
+      return;
+    }
+    await successToast('Login successful!');
+    return;
+  };
+
+  const handleLogout = async () => {
+    await client.signOut();
+    await successToast('Logged out successfully!');
+  };
 
   return {
-    client: authClient,
+    handleLogin,
+    handleLogout,
+    client,
   };
 };

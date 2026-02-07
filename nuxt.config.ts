@@ -1,3 +1,7 @@
+import { createResolver } from '@nuxt/kit';
+
+const resolver = createResolver(import.meta.url);
+
 export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
@@ -9,6 +13,9 @@ export default defineNuxtConfig({
     '@nuxtjs/ionic',
     'convex-nuxt',
   ],
+  plugins: [
+    '~/plugins/convexAuth',
+  ],
   // Forces SPA Mode, needed for Ionic Framework
   ssr: false,
   devtools: { enabled: true },
@@ -16,6 +23,9 @@ export default defineNuxtConfig({
     public: {
       convexSiteUrl: process.env.CONVEX_SITE_URL,
     },
+  },
+  alias: {
+    '@convex': resolver.resolve('convex'),
   },
   compatibilityDate: '2025-07-15',
   convex: {
