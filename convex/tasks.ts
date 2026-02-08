@@ -1,24 +1,70 @@
 import { query, mutation } from './_generated/server';
 import { v } from 'convex/values';
+import { customQuery, customMutation, customCtx } from 'convex-helpers/server/customFunctions';
 
-export const getAll = query({
+const _handleUnauthenticated = () => {
+  return {
+    error: new Error('Unauthenticated'),
+  };
+};
+
+const taskQuery = customQuery(
+  query,
+  customCtx(async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity?.subject) {
+      throw _handleUnauthenticated();
+    }
+    console.log('Task Queried From:', identity.email);
+    return { identity };
+  }),
+);
+
+const taskMutation = customMutation(mutation, {
   args: {},
-  handler: async (ctx) => {
-    return await ctx.db.query('tasks').collect();
+  input: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity?.subject) {
+      throw _handleUnauthenticated();
+    }
+    console.log('Task Mutated From:', identity.email);
+    return {
+      ctx: { identity },
+      args,
+    };
   },
 });
 
-export const getPending = query({
+const taskSelfOwnedMutation = customMutation(mutation, {
+  args: { id: v.id('tasks') },
+  input: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity?.subject) {
+      throw _handleUnauthenticated();
+    }
+    const { id } = args;
+    const task = await ctx.db.get('tasks', id);
+    if (!task || task.owner !== identity.subject) {
+      throw new Error('Unauthorized: You do not own this task');
+    }
+    return {
+      ctx: { identity },
+      args,
+    };
+  },
+});
+
+export const getPending = taskQuery({
   args: {},
   handler: async (ctx) => {
     return await ctx.db
       .query('tasks')
       .filter(q => q.eq(q.field('isCompleted'), false))
-      .first();
+      .collect();
   },
 });
 
-export const getCompleted = query({
+export const getCompleted = taskQuery({
   args: {},
   handler: async (ctx) => {
     return await ctx.db
@@ -28,7 +74,7 @@ export const getCompleted = query({
   },
 });
 
-export const updateCompletionStatus = mutation({
+export const updateCompletionStatus = taskSelfOwnedMutation({
   args: { id: v.id('tasks'), isCompleted: v.boolean() },
   handler: async (ctx, args) => {
     const { id, isCompleted } = args;
@@ -36,7 +82,7 @@ export const updateCompletionStatus = mutation({
   },
 });
 
-export const dismiss = mutation({
+export const dismiss = taskSelfOwnedMutation({
   args: { id: v.id('tasks') },
   handler: async (ctx, args) => {
     const { id } = args;
@@ -44,10 +90,10 @@ export const dismiss = mutation({
   },
 });
 
-export const add = mutation({
+export const add = taskMutation({
   args: { text: v.string() },
   handler: async (ctx, args) => {
     const { text } = args;
-    await ctx.db.insert('tasks', { text, isCompleted: false });
+    await ctx.db.insert('tasks', { owner: ctx.identity.subject, text, isCompleted: false });
   },
 });
