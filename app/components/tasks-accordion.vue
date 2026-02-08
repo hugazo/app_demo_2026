@@ -6,7 +6,7 @@
       v-for="accordion in accordionsGroups"
       :key="accordion.value"
     >
-      <ion-accordion value="first">
+      <ion-accordion :value="accordion.value">
         <ion-item slot="header">
           <ion-badge slot="end">
             {{ accordion.tasks.value.length }}
