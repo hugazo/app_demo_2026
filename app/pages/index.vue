@@ -15,8 +15,8 @@
       <task-list
         v-else
         :tasks="tasks!!"
-        :handle-task-toggle="mutateCompletionStatus"
-        :handle-task-delete="mutateDeleteTask"
+        :handle-task-toggle
+        :handle-task-dismiss
       />
       <ion-button @click="handleLogout">
         Logout
@@ -26,20 +26,12 @@
 </template>
 
 <script setup lang="ts">
-import { api } from '@convex/_generated/api';
-
 const { handleLogout } = useAuth();
 
 const {
-  data: tasks,
+  tasks,
   isPending,
-} = useConvexQuery(api.tasks.getPending, {});
-
-const { mutate: mutateCompletionStatus } = useConvexMutation(
-  api.tasks.updateCompletionStatus,
-);
-
-const { mutate: mutateDeleteTask } = useConvexMutation(
-  api.tasks.dismiss,
-);
+  handleTaskToggle,
+  handleTaskDismiss,
+} = useTasks();
 </script>

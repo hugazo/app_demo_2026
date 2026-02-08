@@ -30,11 +30,11 @@ import type { Doc, Id } from '@convex/_generated/dataModel';
 
 type Task = Doc<'tasks'>;
 type TaskToggleHandler = (args: MaybeRefOrGetter<{ id: Id<'tasks'>; isCompleted: boolean }>) => Promise<null>;
-type TaskDeleteHandler = (args: MaybeRefOrGetter<{ id: Id<'tasks'> }>) => Promise<null>;
+type TaskDismissHandler = (args: MaybeRefOrGetter<{ id: Id<'tasks'> }>) => Promise<null>;
 
 defineProps<{
   tasks: Task[];
   handleTaskToggle: TaskToggleHandler;
-  handleTaskDelete: TaskDeleteHandler;
+  handleTaskDismiss: TaskDismissHandler;
 }>();
 </script>
