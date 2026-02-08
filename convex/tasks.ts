@@ -54,12 +54,12 @@ const taskSelfOwnedMutation = customMutation(mutation, {
   },
 });
 
-export const getPending = taskQuery({
+export const getAll = taskQuery({
   args: {},
   handler: async (ctx) => {
     return await ctx.db
       .query('tasks')
-      .filter(q => q.eq(q.field('isCompleted'), false))
+      .withIndex('by_owner', q => q.eq('owner', ctx.identity.subject))
       .collect();
   },
 });

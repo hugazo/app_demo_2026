@@ -4,7 +4,7 @@ export const useTasks = () => {
   const {
     data: tasks,
     isPending,
-  } = useConvexQuery(api.tasks.getPending, {});
+  } = useConvexQuery(api.tasks.getAll);
 
   const { mutate: handleTaskToggle } = useConvexMutation(
     api.tasks.updateCompletionStatus,

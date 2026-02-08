@@ -2,7 +2,12 @@
   <ion-page>
     <ion-header>
       <ion-toolbar>
-        <ion-title>Home</ion-title>
+        <ion-buttons slot="start">
+          <ion-button @click="handleLogout">
+            Logout
+          </ion-button>
+        </ion-buttons>
+        <ion-title>Tasks ({{ tasks?.length ?? 0 }})</ion-title>
         <ion-buttons slot="end">
           <ion-button
             :strong="true"
@@ -15,20 +20,17 @@
     </ion-header>
     <ion-content class="ion-padding">
       <p v-if="isPending">
-        Loading
+        Loading...
       </p>
       <p v-else-if="tasks?.length === 0">
-        No pending tasks!
+        No tasks!
       </p>
-      <task-list
+      <tasks-accordion
         v-else
         :tasks="tasks!!"
         :handle-task-toggle
         :handle-task-dismiss
       />
-      <ion-button @click="handleLogout">
-        Logout
-      </ion-button>
     </ion-content>
     <add-task-modal
       v-model:task-name="taskName"

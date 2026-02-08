@@ -18,7 +18,7 @@
           color="danger"
           @click="handleTaskDismiss({ id: task._id })"
         >
-          Delete
+          <ion-icon :icon="ioniconsTrashBin" />
         </ion-item-option>
       </ion-item-options>
     </ion-item-sliding>
