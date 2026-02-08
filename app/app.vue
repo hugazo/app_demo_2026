@@ -1,6 +1,6 @@
 <template>
   <ion-app>
-    <template v-if="loading">
+    <template v-if="!authInitialized">
       <ion-spinner />
     </template>
     <template v-else>
@@ -10,13 +10,5 @@
 </template>
 
 <script setup lang="ts">
-const { client } = useAuth();
-
-const loading = ref(true);
-
-const session = await client.getSession();
-
-loading.value = false;
-
-console.log('App loaded, session:', session.data);
+const { authInitialized } = useAuth();
 </script>

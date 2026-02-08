@@ -13,9 +13,6 @@ export default defineNuxtConfig({
     '@nuxtjs/ionic',
     'convex-nuxt',
   ],
-  plugins: [
-    '~/plugins/convexAuth',
-  ],
   // Forces SPA Mode, needed for Ionic Framework
   ssr: false,
   devtools: { enabled: true },
