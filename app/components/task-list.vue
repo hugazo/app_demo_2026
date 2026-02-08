@@ -16,7 +16,7 @@
       <ion-item-options>
         <ion-item-option
           color="danger"
-          @click="handleTaskDelete({ id: task._id })"
+          @click="handleTaskDismiss({ id: task._id })"
         >
           Delete
         </ion-item-option>

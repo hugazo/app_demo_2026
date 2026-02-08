@@ -10,5 +10,12 @@
 </template>
 
 <script setup lang="ts">
-const { authInitialized } = useAuth();
+const router = useIonRouter();
+const { authInitialized, loggedIn } = useAuth();
+
+watchEffect(() => {
+  if (authInitialized.value && !loggedIn.value) {
+    router.push('/login');
+  }
+});
 </script>
