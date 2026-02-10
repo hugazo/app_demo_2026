@@ -24,8 +24,6 @@
 </template>
 
 <script setup lang="ts">
-import type { LoginHandler } from '@/composables/useAuth';
-
 const email = ref('');
 const password = ref('');
 

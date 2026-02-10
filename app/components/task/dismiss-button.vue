@@ -8,8 +8,6 @@
 </template>
 
 <script setup lang="ts">
-import type { TaskId, TaskDismissHandler } from '@/composables/useTasks';
-
 defineProps<{
   taskId: TaskId;
   handleTaskDismiss: TaskDismissHandler;

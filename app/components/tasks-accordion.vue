@@ -25,12 +25,6 @@
 </template>
 
 <script setup lang="ts">
-import type {
-  Task,
-  TaskToggleHandler,
-  TaskDismissHandler,
-} from '@/composables/useTasks';
-
 const accordionsGroups = [
   {
     value: 'first',

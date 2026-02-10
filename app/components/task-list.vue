@@ -27,8 +27,6 @@
 </template>
 
 <script setup lang="ts">
-import type { Task, TaskDismissHandler, TaskToggleHandler } from '@/composables/useTasks';
-
 defineProps<{
   tasks: Task[];
   handleTaskToggle: TaskToggleHandler;
