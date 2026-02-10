@@ -42,14 +42,6 @@ export const useAuth = () => {
 
   const loggedIn = computed(() => !!session.value);
 
-  if (import.meta.client) {
-    authClient.$store.listen('$sessionSignal', async (signal) => {
-      if (!signal)
-        return;
-      await loadSession();
-    });
-  }
-
   const handleEmailSignIn = async (args: {
     email: string;
     password: string;

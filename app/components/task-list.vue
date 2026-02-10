@@ -26,6 +26,9 @@
 </template>
 
 <script setup lang="ts">
-const tasks = inject(TasksCollectionKey) as TasksCollection;
 const handleTaskToggle = inject(TaskToggleHandlerKey) as TaskToggleHandler;
+
+defineProps<{
+  tasks: Task[];
+}>();
 </script>

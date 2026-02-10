@@ -7,7 +7,7 @@
             Logout
           </ion-button>
         </ion-buttons>
-        <ion-title>Tasks ({{ tasks?.length ?? 0 }})</ion-title>
+        <ion-title>Tasks {{ isPending ? 'Loading...' : tasks?.length || 0 }}</ion-title>
         <ion-buttons slot="end">
           <ion-button
             :strong="true"
@@ -38,13 +38,10 @@
 </template>
 
 <script setup lang="ts">
-import type { TasksCollection, TasksPendingRef } from '~/composables/useTasks';
-
 const { handleLogout } = useAuth();
-const tasks = inject(TasksCollectionKey) as TasksCollection;
-const isPending = inject(TasksPendingKey) as TasksPendingRef;
-
 const {
+  tasks,
+  isPending,
   taskName,
   openAddTaskModal,
 } = useTasks();

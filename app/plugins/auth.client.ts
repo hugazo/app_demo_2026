@@ -1,4 +1,4 @@
-export default defineNuxtPlugin(async (nuxtApp) => {
+export default defineNuxtPlugin(async () => {
   const client = useAuthClient();
   const convexClient = useConvexClient();
 
@@ -7,16 +7,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     return tokenValue.data?.token;
   };
 
-  if (!nuxtApp.payload.serverRendered) {
-    await useAuth().loadSession();
-    convexClient.setAuth(getToken);
-  }
-  else if (Boolean(nuxtApp.payload.prerenderedAt) || Boolean(nuxtApp.payload.isCached)) {
-    // To avoid hydration mismatch
-    nuxtApp.hook('app:mounted', async () => {
-      await useAuth().loadSession();
-      convexClient.setAuth(getToken);
-    });
-  }
-  console.log('Auth plugin loaded');
+  await useAuth().loadSession();
+  convexClient.setAuth(getToken);
 });

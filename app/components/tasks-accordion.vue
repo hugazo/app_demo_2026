@@ -23,22 +23,16 @@
 </template>
 
 <script setup lang="ts">
-const tasks = inject(TasksCollectionKey) as TasksCollection;
-
-const filterTasks = (completed: boolean) => {
-  return tasks.value?.filter(task => task.isCompleted === completed) ?? [];
-};
-
 const accordionsGroups = [
   {
     value: 'first',
     header: 'Todo',
-    tasks: computed(() => filterTasks(false)),
+    tasks: inject(PendingTasksKey) as ComputedRef<Task[]>,
   },
   {
     value: 'second',
     header: 'Completed',
-    tasks: computed(() => filterTasks(true)),
+    tasks: inject(CompletedTasksKey) as ComputedRef<Task[]>,
   },
 ];
 </script>

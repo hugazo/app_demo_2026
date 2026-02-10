@@ -9,6 +9,9 @@ export const TasksCollectionKey = Symbol() as InjectionKey<TasksCollection>;
 export type TasksPendingRef = Ref<boolean>;
 export const TasksPendingKey = Symbol() as InjectionKey<TasksPendingRef>;
 
+export const CompletedTasksKey = Symbol() as InjectionKey<ComputedRef<Task[]>>;
+export const PendingTasksKey = Symbol() as InjectionKey<ComputedRef<Task[]>>;
+
 export type TaskId = Id<'tasks'>;
 
 export type TaskDismissHandler = (args: MaybeRefOrGetter<{ id: TaskId }>) => Promise<null>;
@@ -35,9 +38,15 @@ export const useTasks = () => {
     data: tasks,
     isPending,
   } = useConvexQuery(api.tasks.getAll);
-
   provide(TasksCollectionKey, tasks);
   provide(TasksPendingKey, isPending);
+
+  const completedTasks = computed(() => tasks.value?.filter(task => task.isCompleted) ?? []);
+  const pendingTasks = computed(() => tasks.value?.filter(task => !task.isCompleted) ?? []);
+
+  provide(CompletedTasksKey, completedTasks);
+  provide(PendingTasksKey, pendingTasks);
+
 
   const { mutate: handleTaskToggle } = useConvexMutation(
     api.tasks.updateCompletionStatus,
@@ -75,6 +84,8 @@ export const useTasks = () => {
   provide(TaskEditHandlerKey, handleTaskEdit);
 
   return {
+    tasks,
+    isPending,
     openAddTaskModal,
     taskName,
   };
