@@ -1,12 +1,15 @@
 import type { Doc, Id } from '@convex/_generated/dataModel';
 import { api } from '@convex/_generated/api';
+import type { InjectionKey } from 'vue';
 
 export type Task = Doc<'tasks'>;
 export type TaskId = Id<'tasks'>;
 export type TaskDismissHandler = (args: MaybeRefOrGetter<{ id: TaskId }>) => Promise<null>;
 export type TaskToggleHandler = (args: MaybeRefOrGetter<{ id: TaskId; isCompleted: boolean }>) => Promise<null>;
-export type TaskEditStartHandler = (args: MaybeRefOrGetter<{ task: Task }>) => void;
+export type TaskEditStartHandler = (args: MaybeRef<{ taskId: TaskId }>) => void;
 export type NewTaskHandler = () => Promise<void>;
+
+export const TaskEditStartHandlerKey = Symbol() as InjectionKey<TaskEditStartHandler>;
 
 export const useTasks = () => {
   const {
@@ -33,11 +36,13 @@ export const useTasks = () => {
     openAddTaskModal.value = false;
   };
 
-  const handleTaskEditStart = (args: { task: Task }) => {
-    const { task } = unref(args);
+  const handleTaskEditStart = (args: MaybeRef<{ taskId: TaskId }>) => {
+    const { taskId } = unref(args);
     // Todo: Implement and show the edit task modal
-    console.log('Edit task', task);
+    console.log('Edit task', taskId);
   };
+
+  provide(TaskEditStartHandlerKey, handleTaskEditStart);
 
   return {
     tasks,

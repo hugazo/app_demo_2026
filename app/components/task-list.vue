@@ -19,8 +19,7 @@
           :handle-task-dismiss="handleTaskDismiss"
         />
         <task-edit-button
-          :task="task"
-          :handle-task-edit-start="handleTaskEditStart"
+          :task-id="task._id"
         />
       </ion-item-options>
     </ion-item-sliding>
@@ -28,12 +27,11 @@
 </template>
 
 <script setup lang="ts">
-import type { Task, TaskDismissHandler, TaskEditStartHandler, TaskToggleHandler } from '@/composables/useTasks';
+import type { Task, TaskDismissHandler, TaskToggleHandler } from '@/composables/useTasks';
 
 defineProps<{
   tasks: Task[];
   handleTaskToggle: TaskToggleHandler;
   handleTaskDismiss: TaskDismissHandler;
-  handleTaskEditStart: TaskEditStartHandler;
 }>();
 </script>

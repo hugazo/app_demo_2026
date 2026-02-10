@@ -1,17 +1,16 @@
 <template>
   <ion-item-option
     color="primary"
-    @click="handleTaskEditStart({ task })"
+    @click="handleTaskEditStart({ taskId })"
   >
     <ion-icon :icon="ioniconsPencil" />
   </ion-item-option>
 </template>
 
 <script setup lang="ts">
-import type { Task, TaskEditStartHandler } from '@/composables/useTasks';
+const handleTaskEditStart = inject(TaskEditStartHandlerKey)!;
 
 defineProps<{
-  task: Task;
-  handleTaskEditStart: TaskEditStartHandler;
+  taskId: TaskId;
 }>();
 </script>

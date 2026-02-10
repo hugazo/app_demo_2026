@@ -16,8 +16,8 @@
         <task-list
           slot="content"
           :tasks="accordion.tasks.value"
-          :handle-task-toggle="handleTaskToggle"
-          :handle-task-dismiss="handleTaskDismiss"
+          :handle-task-toggle
+          :handle-task-dismiss
         />
       </ion-accordion>
     </template>
@@ -25,7 +25,11 @@
 </template>
 
 <script setup lang="ts">
-import type { Task, TaskToggleHandler, TaskDismissHandler } from '@/composables/useTasks';
+import type {
+  Task,
+  TaskToggleHandler,
+  TaskDismissHandler,
+} from '@/composables/useTasks';
 
 const accordionsGroups = [
   {
