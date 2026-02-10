@@ -4,6 +4,15 @@ import type {
   User,
 } from 'better-auth/client';
 
+type LoginArgs = {
+  email: string;
+  password: string;
+  callbackURL?: string;
+  rememberMe?: boolean;
+};
+
+export type LoginHandler = (args: LoginArgs) => Promise<void>;
+
 export const useAuth = () => {
   const authClient = useAuthClient();
   const convexClient = useConvexClient();

@@ -25,11 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Doc, Id } from '@convex/_generated/dataModel';
-
-type Task = Doc<'tasks'>;
-type TaskToggleHandler = (args: MaybeRefOrGetter<{ id: Id<'tasks'>; isCompleted: boolean }>) => Promise<null>;
-type TaskDismissHandler = (args: MaybeRefOrGetter<{ id: Id<'tasks'> }>) => Promise<null>;
+import type { Task, TaskToggleHandler, TaskDismissHandler } from '@/composables/useTasks';
 
 const accordionsGroups = [
   {

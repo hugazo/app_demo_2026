@@ -30,6 +30,7 @@
         :tasks="tasks!!"
         :handle-task-toggle
         :handle-task-dismiss
+        :handle-task-edit-start
       />
     </ion-content>
     <add-task-modal
@@ -51,5 +52,6 @@ const {
   handleTaskToggle,
   handleTaskDismiss,
   handleNewTask,
+  handleTaskEditStart,
 } = useTasks();
 </script>

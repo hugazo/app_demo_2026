@@ -1,4 +1,12 @@
+import type { Doc, Id } from '@convex/_generated/dataModel';
 import { api } from '@convex/_generated/api';
+
+export type Task = Doc<'tasks'>;
+export type TaskId = Id<'tasks'>;
+export type TaskDismissHandler = (args: MaybeRefOrGetter<{ id: TaskId }>) => Promise<null>;
+export type TaskToggleHandler = (args: MaybeRefOrGetter<{ id: TaskId; isCompleted: boolean }>) => Promise<null>;
+export type TaskEditStartHandler = (args: MaybeRefOrGetter<{ task: Task }>) => void;
+export type NewTaskHandler = () => Promise<void>;
 
 export const useTasks = () => {
   const {
@@ -25,6 +33,12 @@ export const useTasks = () => {
     openAddTaskModal.value = false;
   };
 
+  const handleTaskEditStart = (args: { task: Task }) => {
+    const { task } = unref(args);
+    // Todo: Implement and show the edit task modal
+    console.log('Edit task', task);
+  };
+
   return {
     tasks,
     isPending,
@@ -33,5 +47,6 @@ export const useTasks = () => {
     handleTaskToggle,
     handleTaskDismiss,
     handleNewTask,
+    handleTaskEditStart,
   };
 };

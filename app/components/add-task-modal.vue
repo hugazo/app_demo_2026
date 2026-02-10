@@ -38,10 +38,12 @@
 </template>
 
 <script setup lang="ts">
+import type { NewTaskHandler } from '@/composables/useTasks';
+
 const taskName = defineModel<string>('taskName', { required: true });
 const open = defineModel<boolean>('open');
 
 defineProps<{
-  newTaskHandler: () => Promise<void>;
+  newTaskHandler: NewTaskHandler;
 }>();
 </script>

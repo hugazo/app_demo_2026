@@ -29,7 +29,9 @@
           />
         </ion-item>
         <ion-item>
-          <ion-button @click="handleRegister">Register</ion-button>
+          <ion-button @click="handleRegister">
+            Register
+          </ion-button>
         </ion-item>
       </ion-list>
     </ion-content>
@@ -37,15 +39,14 @@
 </template>
 
 <script setup lang="ts">
-const { client } = useAuth();
-const session = client.useSession();
+const authClient = useAuthClient();
 
 const name = ref('');
 const email = ref('');
 const password = ref('');
 
 const handleRegister = async () => {
-  const _user = await client.signUp.email({
+  const _user = await authClient.signUp.email({
     name: name.value,
     email: email.value,
     password: password.value,

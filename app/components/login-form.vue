@@ -24,20 +24,13 @@
 </template>
 
 <script setup lang="ts">
+import type { LoginHandler } from '@/composables/useAuth';
+
 const email = ref('');
 const password = ref('');
 
 const rememberMe = ref(false);
 const callbackURL = ref<string | undefined>(undefined);
-
-type LoginArgs = {
-  email: string;
-  password: string;
-  callbackURL?: string;
-  rememberMe?: boolean;
-};
-
-type LoginHandler = (args: LoginArgs) => Promise<void>;
 
 defineProps<{
   handleLogin: LoginHandler;

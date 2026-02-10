@@ -14,27 +14,26 @@
       </ion-item>
 
       <ion-item-options>
-        <ion-item-option
-          color="danger"
-          @click="handleTaskDismiss({ id: task._id })"
-        >
-          <ion-icon :icon="ioniconsTrashBin" />
-        </ion-item-option>
+        <task-dismiss-button
+          :task-id="task._id"
+          :handle-task-dismiss="handleTaskDismiss"
+        />
+        <task-edit-button
+          :task="task"
+          :handle-task-edit-start="handleTaskEditStart"
+        />
       </ion-item-options>
     </ion-item-sliding>
   </ion-list>
 </template>
 
 <script setup lang="ts">
-import type { Doc, Id } from '@convex/_generated/dataModel';
-
-type Task = Doc<'tasks'>;
-type TaskToggleHandler = (args: MaybeRefOrGetter<{ id: Id<'tasks'>; isCompleted: boolean }>) => Promise<null>;
-type TaskDismissHandler = (args: MaybeRefOrGetter<{ id: Id<'tasks'> }>) => Promise<null>;
+import type { Task, TaskDismissHandler, TaskEditStartHandler, TaskToggleHandler } from '@/composables/useTasks';
 
 defineProps<{
   tasks: Task[];
   handleTaskToggle: TaskToggleHandler;
   handleTaskDismiss: TaskDismissHandler;
+  handleTaskEditStart: TaskEditStartHandler;
 }>();
 </script>
