@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-const handleTaskEditStart = inject(TaskEditStartHandlerKey)!;
+const handleTaskEditStart = inject(TaskEditStartHandlerKey) as TaskEditStartHandler;
 
 defineProps<{
   taskId: TaskId;

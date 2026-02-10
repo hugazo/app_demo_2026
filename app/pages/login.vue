@@ -6,15 +6,15 @@
           <ion-title>Login Page</ion-title>
         </ion-toolbar>
       </ion-header>
-      <login-form
-        :handle-login="handleEmailSignIn"
-      />
+      <login-form />
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
 const { handleEmailSignIn } = useAuth();
+
+provide(EmailSignInHandlerKey, handleEmailSignIn);
 
 definePageMeta({
   allowUnauthenticated: true,

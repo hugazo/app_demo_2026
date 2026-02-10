@@ -41,7 +41,5 @@
 const taskName = defineModel<string>('taskName', { required: true });
 const open = defineModel<boolean>('open');
 
-defineProps<{
-  newTaskHandler: NewTaskHandler;
-}>();
+const newTaskHandler = inject(NewTaskHandlerKey) as NewTaskHandler;
 </script>

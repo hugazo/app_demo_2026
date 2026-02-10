@@ -16,7 +16,6 @@
       <ion-item-options>
         <task-dismiss-button
           :task-id="task._id"
-          :handle-task-dismiss="handleTaskDismiss"
         />
         <task-edit-button
           :task-id="task._id"
@@ -27,9 +26,6 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  tasks: Task[];
-  handleTaskToggle: TaskToggleHandler;
-  handleTaskDismiss: TaskDismissHandler;
-}>();
+const tasks = inject(TasksCollectionKey) as TasksCollection;
+const handleTaskToggle = inject(TaskToggleHandlerKey) as TaskToggleHandler;
 </script>

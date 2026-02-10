@@ -12,11 +12,11 @@
         v-model="password"
         label="Password"
         type="password"
-        @keyup.enter="handleLogin({ email, password, callbackURL, rememberMe })"
+        @keyup.enter="handleEmailSignIn({ email, password, callbackURL, rememberMe })"
       />
     </ion-item>
     <ion-item>
-      <ion-button @click="handleLogin({ email, password, callbackURL, rememberMe })">
+      <ion-button @click="handleEmailSignIn({ email, password, callbackURL, rememberMe })">
         Login
       </ion-button>
     </ion-item>
@@ -30,7 +30,5 @@ const password = ref('');
 const rememberMe = ref(false);
 const callbackURL = ref<string | undefined>(undefined);
 
-defineProps<{
-  handleLogin: LoginHandler;
-}>();
+const handleEmailSignIn = inject(EmailSignInHandlerKey) as EmailSignInHandler;
 </script>

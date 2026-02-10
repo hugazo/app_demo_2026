@@ -8,8 +8,9 @@
 </template>
 
 <script setup lang="ts">
+const handleTaskDismiss = inject(TaskDismissHandlerKey) as TaskDismissHandler;
+
 defineProps<{
   taskId: TaskId;
-  handleTaskDismiss: TaskDismissHandler;
 }>();
 </script>

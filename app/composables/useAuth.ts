@@ -4,14 +4,15 @@ import type {
   User,
 } from 'better-auth/client';
 
-type LoginArgs = {
+type EmailSignInArgs = {
   email: string;
   password: string;
   callbackURL?: string;
   rememberMe?: boolean;
 };
 
-export type LoginHandler = (args: LoginArgs) => Promise<void>;
+export type EmailSignInHandler = (args: EmailSignInArgs) => Promise<void>;
+export const EmailSignInHandlerKey = Symbol() as InjectionKey<EmailSignInHandler>;
 
 export const useAuth = () => {
   const authClient = useAuthClient();
@@ -88,7 +89,7 @@ export const useAuth = () => {
     loadSession,
     loggedIn,
     authInitialized,
-    handleEmailSignIn,
     handleLogout,
+    handleEmailSignIn,
   };
 };

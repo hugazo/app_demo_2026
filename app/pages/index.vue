@@ -27,31 +27,25 @@
       </p>
       <tasks-accordion
         v-else
-        :tasks="tasks!!"
-        :handle-task-toggle
-        :handle-task-dismiss
-        :handle-task-edit-start
+        :tasks="tasks!"
       />
     </ion-content>
     <add-task-modal
       v-model:task-name="taskName"
       v-model:open="openAddTaskModal"
-      :new-task-handler="handleNewTask"
     />
   </ion-page>
 </template>
 
 <script setup lang="ts">
+import type { TasksCollection, TasksPendingRef } from '~/composables/useTasks';
+
 const { handleLogout } = useAuth();
+const tasks = inject(TasksCollectionKey) as TasksCollection;
+const isPending = inject(TasksPendingKey) as TasksPendingRef;
 
 const {
-  tasks,
-  isPending,
   taskName,
   openAddTaskModal,
-  handleTaskToggle,
-  handleTaskDismiss,
-  handleNewTask,
-  handleTaskEditStart,
 } = useTasks();
 </script>

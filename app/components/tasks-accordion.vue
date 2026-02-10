@@ -16,8 +16,6 @@
         <task-list
           slot="content"
           :tasks="accordion.tasks.value"
-          :handle-task-toggle
-          :handle-task-dismiss
         />
       </ion-accordion>
     </template>
@@ -25,22 +23,22 @@
 </template>
 
 <script setup lang="ts">
+const tasks = inject(TasksCollectionKey) as TasksCollection;
+
+const filterTasks = (completed: boolean) => {
+  return tasks.value?.filter(task => task.isCompleted === completed) ?? [];
+};
+
 const accordionsGroups = [
   {
     value: 'first',
     header: 'Todo',
-    tasks: computed(() => props.tasks?.filter(task => !task.isCompleted) ?? []),
+    tasks: computed(() => filterTasks(false)),
   },
   {
     value: 'second',
     header: 'Completed',
-    tasks: computed(() => props.tasks?.filter(task => task.isCompleted) ?? []),
+    tasks: computed(() => filterTasks(true)),
   },
 ];
-
-const props = defineProps<{
-  tasks: Task[];
-  handleTaskToggle: TaskToggleHandler;
-  handleTaskDismiss: TaskDismissHandler;
-}>();
 </script>
