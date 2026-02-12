@@ -3,13 +3,11 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
 
   const router = useIonRouter();
 
-  const homePath = '/';
+  const homePath = '/tabs/home';
   const loginPath = '/login';
 
   const { loggedIn, loadSession } = useAuth();
   await loadSession();
-
-  console.log('Auth middleware - loggedIn:', loggedIn.value, to.path);
 
   if (!loggedIn.value) {
     if (to.meta.allowUnauthenticated) {
@@ -21,6 +19,5 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
   if (to.path === loginPath) {
     return router.push(homePath);
   }
-
   return;
 });
