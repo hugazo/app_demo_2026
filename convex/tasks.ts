@@ -1,99 +1,97 @@
-import { query, mutation } from './_generated/server';
-import { v } from 'convex/values';
-import { customQuery, customMutation, customCtx } from 'convex-helpers/server/customFunctions';
+import { query, mutation, type MutationCtx, type QueryCtx } from './_generated/server';
+import { ConvexError, v } from 'convex/values';
+import type { Id } from '@convex/_generated/dataModel';
 
-const _handleUnauthenticated = () => {
+const $handleUnauthenticated = (_ctx: MutationCtx | QueryCtx) => {
   return {
-    error: new Error('Unauthenticated'),
+    error: new ConvexError({
+      message: 'Unauthenticated: You must be logged in to perform this action',
+      error: 'UNAUTHENTICATED',
+      code: 401,
+    }),
   };
 };
 
-const taskQuery = customQuery(
-  query,
-  customCtx(async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity?.subject) {
-      throw _handleUnauthenticated();
-    }
-    console.log('Task Queried From:', identity.email);
-    return { identity };
-  }),
-);
+const $authenticate = async (ctx: MutationCtx | QueryCtx) => {
+  const identity = await ctx.auth.getUserIdentity();
+  if (!identity?.subject) {
+    throw $handleUnauthenticated(ctx);
+  }
+  return { identity };
+};
 
-const taskMutation = customMutation(mutation, {
-  args: {},
-  input: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity?.subject) {
-      throw _handleUnauthenticated();
-    }
-    console.log('Task Mutated From:', identity.email);
-    return {
-      ctx: { identity },
-      args,
-    };
-  },
-});
+const $getOwnTask = async (ctx: MutationCtx | QueryCtx, taskId: Id<'tasks'>, ownerId: string) => {
+  const task = await ctx.db.get('tasks', taskId);
+  if (!task || task.owner !== ownerId) {
+    throw new ConvexError({
+      message: 'Not found: No task found',
+      error: 'NOT_FOUND',
+      code: 404,
+    });
+  }
+  return task;
+};
 
-const taskSelfOwnedMutation = customMutation(mutation, {
-  args: { id: v.id('tasks') },
-  input: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity?.subject) {
-      throw _handleUnauthenticated();
-    }
-    const { id } = args;
-    const task = await ctx.db.get('tasks', id);
-    if (!task || task.owner !== identity.subject) {
-      throw new Error('Unauthorized: You do not own this task');
-    }
-    return {
-      ctx: { identity },
-      args,
-    };
-  },
-});
-
-export const getAll = taskQuery({
+export const getAll = query({
   args: {},
   handler: async (ctx) => {
+    const { identity } = await $authenticate(ctx);
     return await ctx.db
       .query('tasks')
-      .withIndex('by_owner', q => q.eq('owner', ctx.identity.subject))
+      .withIndex('by_owner', q => q.eq('owner', identity.subject))
       .collect();
   },
 });
 
-export const getCompleted = taskQuery({
-  args: {},
-  handler: async (ctx) => {
-    return await ctx.db
-      .query('tasks')
-      .filter(q => q.eq(q.field('isCompleted'), true))
-      .collect();
-  },
-});
-
-export const updateCompletionStatus = taskSelfOwnedMutation({
+export const updateCompletionStatus = mutation({
   args: { id: v.id('tasks'), isCompleted: v.boolean() },
   handler: async (ctx, args) => {
     const { id, isCompleted } = args;
+    const { identity } = await $authenticate(ctx);
+    await $getOwnTask(ctx, id, identity.subject);
     await ctx.db.patch('tasks', id, { isCompleted });
   },
 });
 
-export const dismiss = taskSelfOwnedMutation({
+export const editText = mutation({
+  args: { id: v.id('tasks'), text: v.string() },
+  handler: async (ctx, args) => {
+    const { id, text } = args;
+    const { identity } = await $authenticate(ctx);
+    if (text.length <= 3) {
+      throw new ConvexError({
+        message: 'Invalid task: Task text must be longer than 3 characters',
+        error: 'PAYLOAD_INVALID',
+        code: 422,
+      });
+    }
+    await $getOwnTask(ctx, id, identity.subject);
+    await ctx.db.patch('tasks', id, { text });
+  },
+});
+
+export const dismiss = mutation({
   args: { id: v.id('tasks') },
   handler: async (ctx, args) => {
     const { id } = args;
+    const { identity } = await $authenticate(ctx);
+    await $getOwnTask(ctx, id, identity.subject);
     await ctx.db.delete('tasks', id);
   },
 });
 
-export const add = taskMutation({
+export const add = mutation({
   args: { text: v.string() },
   handler: async (ctx, args) => {
     const { text } = args;
-    await ctx.db.insert('tasks', { owner: ctx.identity.subject, text, isCompleted: false });
+    const { identity } = await $authenticate(ctx);
+    if (text.length <= 3) {
+      throw new ConvexError({
+        message: 'Invalid task: Task text must be longer than 3 characters',
+        error: 'PAYLOAD_INVALID',
+        code: 422,
+      });
+    }
+    await ctx.db.insert('tasks', { owner: identity.subject, text, isCompleted: false });
   },
 });

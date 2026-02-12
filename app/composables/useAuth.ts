@@ -14,6 +14,9 @@ type EmailSignInArgs = {
 export type EmailSignInHandler = (args: EmailSignInArgs) => Promise<void>;
 export const EmailSignInHandlerKey = Symbol() as InjectionKey<EmailSignInHandler>;
 
+export type LogoutHandler = () => Promise<void>;
+export const LogoutHandlerKey = Symbol() as InjectionKey<LogoutHandler>;
+
 export const useAuth = () => {
   const authClient = useAuthClient();
   const convexClient = useConvexClient();

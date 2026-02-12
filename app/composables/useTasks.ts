@@ -1,18 +1,20 @@
 import type { Doc, Id } from '@convex/_generated/dataModel';
+import { ConvexError } from 'convex/values';
 import { api } from '@convex/_generated/api';
 import type { InjectionKey } from 'vue';
 
+// Data
+export type TaskId = Id<'tasks'>;
 export type Task = Doc<'tasks'>;
-export type TasksCollection = Ref<Task[] | undefined>;
 
-export const TasksCollectionKey = Symbol() as InjectionKey<TasksCollection>;
 export type TasksPendingRef = Ref<boolean>;
 export const TasksPendingKey = Symbol() as InjectionKey<TasksPendingRef>;
 
 export const CompletedTasksKey = Symbol() as InjectionKey<ComputedRef<Task[]>>;
 export const PendingTasksKey = Symbol() as InjectionKey<ComputedRef<Task[]>>;
+export const TaskCountKey = Symbol() as InjectionKey<ComputedRef<number>>;
 
-export type TaskId = Id<'tasks'>;
+// Task Handlers
 
 export type TaskDismissHandler = (args: MaybeRefOrGetter<{ id: TaskId }>) => Promise<null>;
 export const TaskDismissHandlerKey = Symbol() as InjectionKey<TaskDismissHandler>;
@@ -26,67 +28,109 @@ export const TaskEditStartHandlerKey = Symbol() as InjectionKey<TaskEditStartHan
 export type NewTaskHandler = () => Promise<void>;
 export const NewTaskHandlerKey = Symbol() as InjectionKey<NewTaskHandler>;
 
-type TaskEditHandlerArgs = MaybeRef<{
-  taskId: TaskId;
-  text: Pick<Task, 'text'>;
-}>;
-export type TaskEditHandler = (args: TaskEditHandlerArgs) => void;
+export type TaskEditHandler = (args: MaybeRefOrGetter<{ id: TaskId; text: string }>) => Promise<void>;
 export const TaskEditHandlerKey = Symbol() as InjectionKey<TaskEditHandler>;
+
+// Modal handlers
+export type OpenTaskModalHandler = (taskId: TaskId | undefined) => void;
+export const OpenTaskModalHandlerKey = Symbol() as InjectionKey<OpenTaskModalHandler>;
+export const ResetTaskFormKey = Symbol() as InjectionKey<() => void>;
+
+// Modal form
+export const CurrentTaskKey = Symbol() as InjectionKey<Ref<Task | null>>;
+export const OpenTaskModalKey = Symbol() as InjectionKey<Ref<boolean>>;
+export const TaskNameKey = Symbol() as InjectionKey<Ref<string>>;
+export const FormErrorKey = Symbol() as InjectionKey<Ref<string | null>>;
 
 export const useTasks = () => {
   const {
     data: tasks,
     isPending,
   } = useConvexQuery(api.tasks.getAll);
-  provide(TasksCollectionKey, tasks);
-  provide(TasksPendingKey, isPending);
 
   const completedTasks = computed(() => tasks.value?.filter(task => task.isCompleted) ?? []);
   const pendingTasks = computed(() => tasks.value?.filter(task => !task.isCompleted) ?? []);
-
-  provide(CompletedTasksKey, completedTasks);
-  provide(PendingTasksKey, pendingTasks);
-
+  const taskCount = computed(() => tasks.value?.length ?? 0);
 
   const { mutate: handleTaskToggle } = useConvexMutation(
     api.tasks.updateCompletionStatus,
   );
-  provide(TaskToggleHandlerKey, handleTaskToggle);
 
   const { mutate: handleTaskDismiss } = useConvexMutation(
     api.tasks.dismiss,
   );
-  provide(TaskDismissHandlerKey, handleTaskDismiss);
 
-  const openAddTaskModal = useState<boolean>('tasks:openAddTaskModal', () => false);
-  const taskName = useState<string>('tasks:taskName', () => '');
+  const openTaskModal = ref<boolean>(false);
 
-  const { mutate: addTask } = useConvexMutation(api.tasks.add);
+  const taskName = ref<string>('');
+  const formError = ref<string | null>(null);
 
+  const addTask = useConvexMutation(api.tasks.add);
   const handleNewTask = async () => {
-    await addTask({ text: taskName.value });
+    try {
+      await addTask.mutate({ text: taskName.value });
+      $resetForm();
+    }
+    catch (error) {
+      $handleError(error);
+    }
+  };
+
+  const currentTask = ref<Task | null>(null);
+
+  const handleOpenTaskModal = (taskId?: TaskId) => {
+    if (taskId) {
+      const task = tasks.value?.find(task => task._id === taskId) ?? null;
+      currentTask.value = task;
+      taskName.value = task?.text ?? '';
+    }
+    else {
+      currentTask.value = null;
+      taskName.value = '';
+    }
+    openTaskModal.value = true;
+  };
+
+  const { mutate: _handleTaskEdit } = useConvexMutation(api.tasks.editText);
+
+  const handleTaskEdit = async (args: MaybeRefOrGetter<{ id: TaskId; text: string }>) => {
+    try {
+      const { id, text } = toValue(args);
+      await _handleTaskEdit({ id, text });
+      $resetForm();
+    }
+    catch (error) {
+      $handleError(error);
+    }
+  };
+
+  const $handleError = (error: unknown) => {
+    if (error instanceof ConvexError) {
+      formError.value = error.data.message;
+    }
+  };
+
+  const $resetForm = () => {
+    currentTask.value = null;
     taskName.value = '';
-    openAddTaskModal.value = false;
+    openTaskModal.value = false;
+    formError.value = null;
   };
-  provide(NewTaskHandlerKey, handleNewTask);
-
-  const handleTaskEditStart = (args: MaybeRef<{ taskId: TaskId }>) => {
-    const { taskId } = unref(args);
-    // Todo: Implement and show the edit task modal
-    console.log('Edit task', taskId);
-  };
-  provide(TaskEditStartHandlerKey, handleTaskEditStart);
-
-  const handleTaskEdit = (args: TaskEditHandlerArgs) => {
-    const { taskId, text } = unref(args);
-    console.log('Edit task', taskId, 'with text', text);
-  };
-  provide(TaskEditHandlerKey, handleTaskEdit);
 
   return {
-    tasks,
+    taskCount,
     isPending,
-    openAddTaskModal,
+    handleOpenTaskModal,
     taskName,
+    completedTasks,
+    pendingTasks,
+    handleTaskToggle,
+    handleTaskDismiss,
+    openTaskModal,
+    formError,
+    handleNewTask,
+    currentTask,
+    handleTaskEdit,
+    $resetForm,
   };
 };
