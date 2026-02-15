@@ -61,7 +61,7 @@ export const useAuth = () => {
       await errorToast(result.error?.message || 'Email sign-in failed');
       return;
     }
-    router.push('/');
+    router.push('/tabs/home');
     await successToast('Email sign-in successful!');
   };
 

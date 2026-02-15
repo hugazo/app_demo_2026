@@ -1,7 +1,6 @@
 <template>
   <ion-header>
     <ion-toolbar>
-      <auth-signout-button slot="start" />
       <ion-title>
         Tasks {{ isPending ? 'Loading...' : `(${taskCount})` }}
       </ion-title>
