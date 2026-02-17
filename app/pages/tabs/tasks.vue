@@ -42,4 +42,8 @@ provide(CurrentTaskKey, currentTask);
 provide(OpenTaskModalHandlerKey, handleOpenTaskModal);
 provide(TaskEditHandlerKey, handleTaskEdit);
 provide(ResetTaskFormKey, $resetForm);
+
+definePageMeta({
+  priority: 2,
+});
 </script>

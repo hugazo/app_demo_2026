@@ -7,7 +7,6 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@nuxt/fonts',
     '@nuxt/hints',
-    '@nuxt/icon',
     '@nuxt/image',
     '@nuxt/test-utils',
     '@nuxtjs/ionic',

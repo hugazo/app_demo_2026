@@ -1,12 +1,18 @@
 <template>
   <ion-page>
-    <ion-header>
+    <ion-header :translucent="true">
       <ion-toolbar>
         <ion-title>Settings</ion-title>
       </ion-toolbar>
     </ion-header>
-    <ion-content>
+    <ion-content :fullscreen="true">
       Settings content
     </ion-content>
   </ion-page>
 </template>
+
+<script setup lang="ts">
+definePageMeta({
+  priority: 3,
+});
+</script>

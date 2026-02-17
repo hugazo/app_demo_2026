@@ -2,34 +2,31 @@
   <ion-page>
     <ion-content>
       <ion-tabs>
-        <ion-router-outlet />
+        <ion-router-outlet
+          :animate="true"
+        />
 
         <ion-tab-bar slot="bottom">
-          <ion-tab-button
-            tab="home"
-            href="/tabs/home"
+          <template
+            v-for="tab in tabLinks"
+            :key="tab.name"
           >
-            <ion-icon :icon="ioniconsHomeOutline" />
-            <ion-label>Home</ion-label>
-          </ion-tab-button>
-
-          <ion-tab-button
-            tab="tasks"
-            href="/tabs/tasks"
-          >
-            <ion-icon :icon="ioniconsList" />
-            <ion-label>Tasks</ion-label>
-          </ion-tab-button>
-
-          <ion-tab-button
-            tab="settings"
-            href="/tabs/settings"
-          >
-            <ion-icon :icon="ioniconsCog" />
-            <ion-label>Settings</ion-label>
-          </ion-tab-button>
+            <ion-tab-button
+              :selected="route.path === `/tabs/${tab.path}`"
+              @click="handleTabChange(tab.path)"
+            >
+              <ion-icon :icon="tab.icon" />
+              <ion-label class="ion-text-uppercase">
+                {{ tab.path }}
+              </ion-label>
+            </ion-tab-button>
+          </template>
         </ion-tab-bar>
       </ion-tabs>
     </ion-content>
   </ion-page>
 </template>
+
+<script setup lang="ts">
+const { tabLinks, handleTabChange } = useTabs();
+</script>
