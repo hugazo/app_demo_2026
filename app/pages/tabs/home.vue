@@ -16,4 +16,8 @@
 const { handleLogout } = useAuth();
 
 provide(LogoutHandlerKey, handleLogout);
+
+definePageMeta({
+  priority: 1,
+});
 </script>
