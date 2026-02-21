@@ -12,7 +12,7 @@ export default defineNuxtConfig({
     '@nuxtjs/ionic',
     'convex-nuxt',
   ],
-  // Forces SPA Mode, needed for Ionic Framework
+  // Forces SPA Mode, needed for iOS/Android builds with Capacitor
   ssr: false,
   devtools: { enabled: true },
   runtimeConfig: {

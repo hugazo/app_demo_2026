@@ -28,5 +28,10 @@
 </template>
 
 <script setup lang="ts">
+// Avoids auto import from nuxt
+import { useRoute } from 'vue-router';
+
 const { tabLinks, handleTabChange } = useTabs();
+
+const route = useRoute();
 </script>
