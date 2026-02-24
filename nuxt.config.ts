@@ -11,6 +11,7 @@ export default defineNuxtConfig({
     '@nuxt/test-utils',
     '@nuxtjs/ionic',
     'convex-nuxt',
+    '@pinia/nuxt',
   ],
   // Forces SPA Mode, needed for iOS/Android builds with Capacitor
   ssr: false,
