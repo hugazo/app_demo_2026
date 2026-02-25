@@ -6,7 +6,6 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
     '@nuxt/fonts',
-    '@nuxt/hints',
     '@nuxt/image',
     '@nuxt/test-utils',
     '@nuxtjs/ionic',
@@ -34,8 +33,5 @@ export default defineNuxtConfig({
         semi: true,
       },
     },
-  },
-  hints: {
-    hydration: false,
   },
 });

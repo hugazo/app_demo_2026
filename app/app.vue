@@ -1,7 +1,7 @@
 <template>
   <ion-app>
-    <template v-if="!authInitialized">
-      <ion-spinner />
+    <template v-if="!initialized">
+      <loader-loading-page />
     </template>
     <template v-else>
       <ion-router-outlet />
@@ -10,5 +10,5 @@
 </template>
 
 <script setup lang="ts">
-const { authInitialized } = useAuth();
+const { initialized } = useAppStatus();
 </script>
