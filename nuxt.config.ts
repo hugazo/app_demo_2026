@@ -6,11 +6,11 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
     '@nuxt/fonts',
-    '@nuxt/hints',
     '@nuxt/image',
     '@nuxt/test-utils',
     '@nuxtjs/ionic',
     'convex-nuxt',
+    '@pinia/nuxt',
   ],
   // Forces SPA Mode, needed for iOS/Android builds with Capacitor
   ssr: false,
@@ -33,8 +33,5 @@ export default defineNuxtConfig({
         semi: true,
       },
     },
-  },
-  hints: {
-    hydration: false,
   },
 });

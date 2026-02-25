@@ -1,9 +1,3 @@
-import type {
-  InferSessionFromClient,
-  BetterAuthClientOptions,
-  User,
-} from 'better-auth/client';
-
 type EmailSignInArgs = {
   email: string;
   password: string;
@@ -18,39 +12,41 @@ export type LogoutHandler = () => Promise<void>;
 export const LogoutHandlerKey = Symbol() as InjectionKey<LogoutHandler>;
 
 export const useAuth = () => {
+  const {
+    session,
+    user,
+    authInitialized,
+    sessionLoading,
+  } = storeToRefs(authState());
+
   const authClient = useAuthClient();
   const convexClient = useConvexClient();
   const router = useIonRouter();
   const { successToast, errorToast } = useToast();
 
-  const session = useState<InferSessionFromClient<BetterAuthClientOptions> | null>('auth:session', () => null);
-  const user = useState<User | null>('auth:user', () => null);
-  const authInitialized = useState<boolean>('auth:initialized', () => false);
-  const sessionLoading = useState<boolean>('auth:sessionLoading', () => false);
-
   const loadSession = async () => {
     if (sessionLoading.value) return;
-
     sessionLoading.value = true;
 
-    const { data, error } = await authClient.getSession();
+    try {
+      const { data } = await authClient.getSession();
 
-    console.log('Loaded session data:', data, error);
+      session.value = data?.session || null;
+      user.value = data?.user || null;
+      authInitialized.value = true;
 
-    session.value = data?.session || null;
-    user.value = data?.user || null;
-    authInitialized.value = true;
-    sessionLoading.value = false;
+      if (session.value) {
+        convexClient.setAuth($getToken);
+      }
+    }
+    finally {
+      sessionLoading.value = false;
+    }
   };
 
   const loggedIn = computed(() => !!session.value);
 
-  const handleEmailSignIn = async (args: {
-    email: string;
-    password: string;
-    callbackURL?: string;
-    rememberMe?: boolean;
-  }) => {
+  const handleEmailSignIn = async (args: EmailSignInArgs) => {
     const result = await authClient.signIn.email({
       email: args.email,
       password: args.password,
@@ -61,20 +57,28 @@ export const useAuth = () => {
       await errorToast(result.error?.message || 'Email sign-in failed');
       return;
     }
+    await loadSession();
     router.push('/tabs/home');
     await successToast('Email sign-in successful!');
   };
 
   const handleLogout = async () => {
     const result = await authClient.signOut();
+
     if (result.error) {
       await errorToast(result.error?.message || 'Logout failed');
       return;
     }
-    await convexClient.close();
-    await successToast('Logged out successfully!');
-
+    convexClient.close();
+    session.value = null;
+    user.value = null;
     router.push('/login');
+    await successToast('Logged out successfully!');
+  };
+
+  const $getToken = async () => {
+    const tokenValue = await authClient.convex.token();
+    return tokenValue?.data?.token || null;
   };
 
   return {

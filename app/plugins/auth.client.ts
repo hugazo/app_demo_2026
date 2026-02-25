@@ -1,12 +1,5 @@
 export default defineNuxtPlugin(async () => {
-  const client = useAuthClient();
-  const convexClient = useConvexClient();
+  const { initializeApp } = useAppStatus();
 
-  const getToken = async () => {
-    const tokenValue = await client.convex.token();
-    return tokenValue.data?.token;
-  };
-
-  await useAuth().loadSession();
-  convexClient.setAuth(getToken);
+  await initializeApp();
 });
