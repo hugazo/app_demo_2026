@@ -17,6 +17,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   runtimeConfig: {
     public: {
+      convexUrl: process.env.CONVEX_URL,
       convexSiteUrl: process.env.CONVEX_SITE_URL,
     },
   },
