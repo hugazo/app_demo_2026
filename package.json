@@ -39,7 +39,7 @@
     "@nuxtjs/ionic": "1.0.2",
     "@pinia/nuxt": "0.11.3",
     "better-auth": "1.5.5",
-    "convex": "1.33.0",
+    "convex": "1.33.1",
     "convex-nuxt": "0.1.5",
     "convex-vue": "^0.1.5",
     "eslint": "10.0.3",
