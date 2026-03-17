@@ -15,7 +15,7 @@ export default defineNuxtRouteMiddleware(async (to, _from) => {
 
   const { loggedIn } = useAuth();
 
-  if (loggedIn) {
+  if (loggedIn.value) {
     if (
       to.path === loginPath
       || to.path === '/'

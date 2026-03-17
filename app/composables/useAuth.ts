@@ -58,7 +58,7 @@ export const useAuth = () => {
       return;
     }
     await loadSession();
-    router.push('/tabs/home');
+    router.navigate('/tabs/home');
     await successToast('Email sign-in successful!');
   };
 
@@ -72,7 +72,7 @@ export const useAuth = () => {
     convexClient.close();
     session.value = null;
     user.value = null;
-    router.push('/login');
+    router.navigate('/login');
     await successToast('Logged out successfully!');
   };
 

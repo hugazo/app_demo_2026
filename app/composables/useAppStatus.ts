@@ -14,8 +14,8 @@ export const useAppStatus = () => {
   const initializeApp = async () => {
     if (initialized.value) return;
     await loadSession();
-    await SplashScreen.hide();
     setInitialized(true);
+    await SplashScreen.hide();
   };
 
   return {
