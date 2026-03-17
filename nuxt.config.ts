@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     '@nuxt/fonts',
     '@nuxt/image',
     '@nuxt/test-utils',
+    '@nuxt/test-utils/module',
     '@nuxtjs/ionic',
     'convex-nuxt',
     '@pinia/nuxt',
