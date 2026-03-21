@@ -34,4 +34,8 @@ import { useRoute } from 'vue-router';
 const { tabLinks, handleTabChange } = useTabs();
 
 const route = useRoute();
+
+definePageMeta({
+  alias: ['/'],
+});
 </script>
