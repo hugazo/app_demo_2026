@@ -1,4 +1,4 @@
-import { toastController } from "#imports";
+import { toastController } from '#imports';
 
 export default () => {
   const duration = 2000;
@@ -27,7 +27,7 @@ export default () => {
 
     await toast.present();
   };
-  
+
   return {
     successToast,
     errorToast,
