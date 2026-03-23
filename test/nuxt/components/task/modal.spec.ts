@@ -23,6 +23,14 @@ describe('TaskModal', () => {
   let currentTask: Ref<Task | null>;
   let taskFormError: Ref<string | null>;
 
+  const mockTask = {
+    _id: 't1' as Id<'tasks'>,
+    _creationTime: 0,
+    owner: 'u1',
+    text: 'Existing task',
+    isCompleted: false,
+  } as Task;
+
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -30,6 +38,14 @@ describe('TaskModal', () => {
     open = ref(true);
     currentTask = ref(null);
     taskFormError = ref(null);
+  });
+
+  const IonInputStub = defineComponent({
+    name: 'IonInput',
+    inheritAttrs: true,
+    props: ['modelValue', 'autofocus', 'label', 'labelPlacement', 'type', 'errorText', 'placeholder'],
+    emits: ['update:modelValue'],
+    template: '<input />',
   });
 
   const mountComponent = () =>
@@ -47,6 +63,9 @@ describe('TaskModal', () => {
         stubs: {
           'ion-modal': { template: '<div><slot /></div>' },
         },
+        components: {
+          IonInput: IonInputStub,
+        },
       },
     });
 
@@ -57,13 +76,7 @@ describe('TaskModal', () => {
   });
 
   it('shows "Edit Task" title when a current task is set', () => {
-    currentTask.value = {
-      _id: 't1' as Id<'tasks'>,
-      _creationTime: 0,
-      owner: 'u1',
-      text: 'Existing task',
-      isCompleted: false,
-    } as Task;
+    currentTask.value = mockTask;
 
     const wrapper = mountComponent();
 
@@ -79,13 +92,7 @@ describe('TaskModal', () => {
   });
 
   it('shows Edit button when current task is set', () => {
-    currentTask.value = {
-      _id: 't1' as Id<'tasks'>,
-      _creationTime: 0,
-      owner: 'u1',
-      text: 'Existing task',
-      isCompleted: false,
-    } as Task;
+    currentTask.value = mockTask;
 
     const wrapper = mountComponent();
 
@@ -111,13 +118,7 @@ describe('TaskModal', () => {
   });
 
   it('calls taskEditHandler when Edit is clicked', async () => {
-    currentTask.value = {
-      _id: 't1' as Id<'tasks'>,
-      _creationTime: 0,
-      owner: 'u1',
-      text: 'Existing task',
-      isCompleted: false,
-    } as Task;
+    currentTask.value = mockTask;
     taskName.value = 'Updated task';
 
     const wrapper = mountComponent();
@@ -132,9 +133,17 @@ describe('TaskModal', () => {
 
     const wrapper = mountComponent();
 
-    const input = wrapper.find('ion-input');
+    const input = wrapper.findComponent(IonInputStub);
     expect(input.classes()).toContain('ion-invalid');
     expect(input.classes()).not.toContain('ion-valid');
+    expect(input.props('errorText')).toBe('Task name too short');
+  });
+
+  it('does not set error-text when taskFormError is null', () => {
+    const wrapper = mountComponent();
+
+    const input = wrapper.findComponent(IonInputStub);
+    expect(input.props('errorText')).not.toEqual(expect.any(String));
   });
 
   it('applies ion-valid class when no error and name >= 4 chars', () => {
@@ -142,7 +151,7 @@ describe('TaskModal', () => {
 
     const wrapper = mountComponent();
 
-    const input = wrapper.find('ion-input');
+    const input = wrapper.findComponent(IonInputStub);
     expect(input.classes()).toContain('ion-valid');
     expect(input.classes()).not.toContain('ion-invalid');
   });
@@ -160,27 +169,29 @@ describe('TaskModal', () => {
   it('calls newTaskHandler on Enter key in input (create mode)', async () => {
     const wrapper = mountComponent();
 
-    const input = wrapper.find('ion-input');
+    const input = wrapper.findComponent(IonInputStub);
     await input.trigger('keyup', { key: 'Enter' });
 
     expect(mockNewTaskHandler).toHaveBeenCalled();
   });
 
   it('calls taskEditHandler on Enter key in input (edit mode)', async () => {
-    currentTask.value = {
-      _id: 't1' as Id<'tasks'>,
-      _creationTime: 0,
-      owner: 'u1',
-      text: 'Existing task',
-      isCompleted: false,
-    } as Task;
+    currentTask.value = mockTask;
     taskName.value = 'Updated task';
 
     const wrapper = mountComponent();
 
-    const input = wrapper.find('ion-input');
+    const input = wrapper.findComponent(IonInputStub);
     await input.trigger('keyup', { key: 'Enter' });
 
     expect(mockTaskEditHandler).toHaveBeenCalledWith({ id: 't1', text: 'Updated task' });
+  });
+
+  it('updates taskName when ion-input emits update:modelValue', async () => {
+    const wrapper = mountComponent();
+
+    await wrapper.findComponent(IonInputStub).vm.$emit('update:modelValue', 'New value');
+
+    expect(taskName.value).toBe('New value');
   });
 });

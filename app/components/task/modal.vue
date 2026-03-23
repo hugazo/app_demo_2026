@@ -43,11 +43,9 @@
           :label="`${currentTask ? 'Edit' : 'Enter'} the task name`"
           label-placement="stacked"
           type="text"
-          :error-text="taskFormError ? taskFormError : undefined"
+          :error-text="taskFormError ?? undefined"
           placeholder="Do something..."
-          @keyup.enter="currentTask
-            ? taskEditHandler({ id: currentTask._id, text: taskName })
-            : newTaskHandler()"
+          @keyup.enter="handleEnterKey()"
         />
       </ion-item>
     </ion-content>
@@ -64,4 +62,13 @@ const newTaskHandler = inject(NewTaskHandlerKey) as NewTaskHandler;
 const currentTask = inject(CurrentTaskKey);
 const taskEditHandler = inject(TaskEditHandlerKey) as TaskEditHandler;
 const taskFormError = inject(FormErrorKey) as Ref<string | null>;
+
+const handleEnterKey = () => {
+  if (currentTask?.value) {
+    taskEditHandler({ id: currentTask.value._id, text: taskName.value });
+  }
+  else {
+    newTaskHandler();
+  }
+};
 </script>
