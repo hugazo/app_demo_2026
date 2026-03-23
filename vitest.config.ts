@@ -5,13 +5,6 @@ import { defineVitestProject } from '@nuxt/test-utils/config';
 export default defineConfig({
   test: {
     projects: [
-      {
-        test: {
-          name: 'unit',
-          include: ['test/unit/*.{test,spec}.ts'],
-          environment: 'node',
-        },
-      },
       await defineVitestProject({
         test: {
           name: 'nuxt',
@@ -25,6 +18,18 @@ export default defineConfig({
           },
         },
       }),
+      {
+        resolve: {
+          alias: {
+            '@convex': fileURLToPath(new URL('./convex', import.meta.url)),
+          },
+        },
+        test: {
+          name: 'convex',
+          include: ['test/convex/**/*.{test,spec}.ts'],
+          environment: 'edge-runtime',
+        },
+      },
     ],
     coverage: {
       enabled: true,
