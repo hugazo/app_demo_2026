@@ -1,7 +1,7 @@
 <template>
   <ion-item-option
     color="danger"
-    @click="handleTaskDismiss({ id: taskId })"
+    @click="handleTaskDismiss({ taskId })"
   >
     <ion-icon :icon="ioniconsTrashBin" />
   </ion-item-option>

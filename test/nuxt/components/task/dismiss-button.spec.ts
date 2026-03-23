@@ -34,6 +34,6 @@ describe('DismissButton', () => {
 
     await wrapper.find('ion-item-option').trigger('click');
 
-    expect(mockHandleTaskDismiss).toHaveBeenCalledWith({ id: taskId });
+    expect(mockHandleTaskDismiss).toHaveBeenCalledWith({ taskId });
   });
 });

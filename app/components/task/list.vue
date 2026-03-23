@@ -7,7 +7,7 @@
       <ion-item :color="task.isCompleted ? 'success' : 'medium'">
         <ion-toggle
           :checked="task.isCompleted"
-          @ion-change="handleTaskToggle({ id: task._id, isCompleted: $event.detail.checked })"
+          @ion-change="handleTaskToggle({ taskId: task._id, isCompleted: $event.detail.checked })"
         >
           {{ task.text }}
         </ion-toggle>

@@ -16,7 +16,7 @@
           <ion-button
             v-if="currentTask"
             :strong="true"
-            @click="taskEditHandler({ id: currentTask._id, text: taskName })"
+            @click="taskEditHandler({ taskId: currentTask._id, text: taskName })"
           >
             Edit
           </ion-button>
@@ -65,7 +65,7 @@ const taskFormError = inject(FormErrorKey) as Ref<string | null>;
 
 const handleEnterKey = () => {
   if (currentTask?.value) {
-    taskEditHandler({ id: currentTask.value._id, text: taskName.value });
+    taskEditHandler({ taskId: currentTask.value._id, text: taskName.value });
   }
   else {
     newTaskHandler();

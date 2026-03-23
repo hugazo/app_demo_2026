@@ -174,10 +174,10 @@ describe('useTasks composable', () => {
     currentTask.value = taskA as Task;
     formError.value = 'Old error';
 
-    await handleTaskEdit({ id: taskA._id, text: 'Updated task text' });
+    await handleTaskEdit({ taskId: taskA._id, text: 'Updated task text' });
 
     expect(mockEdit).toHaveBeenCalledOnce();
-    expect(mockEdit).toHaveBeenCalledWith({ id: taskA._id, text: 'Updated task text' });
+    expect(mockEdit).toHaveBeenCalledWith({ taskId: taskA._id, text: 'Updated task text' });
     expect(taskName.value).toBe('');
     expect(openTaskModal.value).toBe(false);
     expect(currentTask.value).toBeNull();
@@ -190,7 +190,7 @@ describe('useTasks composable', () => {
     const { handleTaskEdit, formError, openTaskModal } = useTasks();
 
     openTaskModal.value = true;
-    await handleTaskEdit({ id: taskA._id, text: 'No-op' });
+    await handleTaskEdit({ taskId: taskA._id, text: 'No-op' });
 
     expect(formError.value).toBe('Task not found');
     expect(openTaskModal.value).toBe(true);
@@ -202,7 +202,7 @@ describe('useTasks composable', () => {
     const { handleTaskEdit, formError } = useTasks();
 
     formError.value = 'Existing error';
-    await handleTaskEdit({ id: taskA._id, text: 'No-op' });
+    await handleTaskEdit({ taskId: taskA._id, text: 'No-op' });
 
     expect(formError.value).toBe('Existing error');
   });
@@ -210,19 +210,19 @@ describe('useTasks composable', () => {
   it('accepts getter args for handleTaskEdit', async () => {
     const { handleTaskEdit } = useTasks();
 
-    await handleTaskEdit(() => ({ id: taskA._id, text: 'From getter' }));
+    await handleTaskEdit(() => ({ taskId: taskA._id, text: 'From getter' }));
 
-    expect(mockEdit).toHaveBeenCalledWith({ id: taskA._id, text: 'From getter' });
+    expect(mockEdit).toHaveBeenCalledWith({ taskId: taskA._id, text: 'From getter' });
   });
 
   it('exposes passthrough mutation handlers for toggle and dismiss', async () => {
     const { handleTaskToggle, handleTaskDismiss } = useTasks();
 
-    await handleTaskToggle({ id: taskA._id, isCompleted: true });
-    await handleTaskDismiss({ id: taskA._id });
+    await handleTaskToggle({ taskId: taskA._id, isCompleted: true });
+    await handleTaskDismiss({ taskId: taskA._id });
 
-    expect(mockToggle).toHaveBeenCalledWith({ id: taskA._id, isCompleted: true });
-    expect(mockDismiss).toHaveBeenCalledWith({ id: taskA._id });
+    expect(mockToggle).toHaveBeenCalledWith({ taskId: taskA._id, isCompleted: true });
+    expect(mockDismiss).toHaveBeenCalledWith({ taskId: taskA._id });
   });
 
   it('resets form state via $resetForm', () => {

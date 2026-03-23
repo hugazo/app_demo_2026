@@ -125,7 +125,7 @@ describe('TaskModal', () => {
 
     await wrapper.find('ion-buttons[slot="end"] ion-button').trigger('click');
 
-    expect(mockTaskEditHandler).toHaveBeenCalledWith({ id: 't1', text: 'Updated task' });
+    expect(mockTaskEditHandler).toHaveBeenCalledWith({ taskId: 't1', text: 'Updated task' });
   });
 
   it('applies ion-invalid class when taskFormError is set', () => {
@@ -184,7 +184,7 @@ describe('TaskModal', () => {
     const input = wrapper.findComponent(IonInputStub);
     await input.trigger('keyup', { key: 'Enter' });
 
-    expect(mockTaskEditHandler).toHaveBeenCalledWith({ id: 't1', text: 'Updated task' });
+    expect(mockTaskEditHandler).toHaveBeenCalledWith({ taskId: 't1', text: 'Updated task' });
   });
 
   it('updates taskName when ion-input emits update:modelValue', async () => {

@@ -59,6 +59,6 @@ describe('TaskList', () => {
     const toggle = wrapper.findAll('ion-toggle')[0]!;
     await toggle.trigger('ionChange', { detail: { checked: true } });
 
-    expect(mockHandleTaskToggle).toHaveBeenCalledWith({ id: 'task_1', isCompleted: true });
+    expect(mockHandleTaskToggle).toHaveBeenCalledWith({ taskId: 'task_1', isCompleted: true });
   });
 });

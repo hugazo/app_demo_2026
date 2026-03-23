@@ -2,25 +2,19 @@ import { query, mutation, type MutationCtx, type QueryCtx } from './_generated/s
 import { ConvexError, v } from 'convex/values';
 import type { Id } from '@convex/_generated/dataModel';
 
-const $handleUnauthenticated = (_ctx: MutationCtx | QueryCtx) => {
-  return {
-    error: new ConvexError({
+const $requireAuth = async (ctx: MutationCtx | QueryCtx) => {
+  const identity = await ctx.auth.getUserIdentity();
+  if (!identity?.subject) {
+    throw new ConvexError({
       message: 'Unauthenticated: You must be logged in to perform this action',
       error: 'UNAUTHENTICATED',
       code: 401,
-    }),
-  };
-};
-
-const $authenticate = async (ctx: MutationCtx | QueryCtx) => {
-  const identity = await ctx.auth.getUserIdentity();
-  if (!identity?.subject) {
-    throw $handleUnauthenticated(ctx);
+    });
   }
   return { identity };
 };
 
-const $getOwnTask = async (ctx: MutationCtx | QueryCtx, taskId: Id<'tasks'>, ownerId: string) => {
+const $requireOwnTask = async (ctx: MutationCtx | QueryCtx, taskId: Id<'tasks'>, ownerId: string) => {
   const task = await ctx.db.get('tasks', taskId);
   if (!task || task.owner !== ownerId) {
     throw new ConvexError({
@@ -32,10 +26,10 @@ const $getOwnTask = async (ctx: MutationCtx | QueryCtx, taskId: Id<'tasks'>, own
   return task;
 };
 
-export const getAll = query({
+export const list = query({
   args: {},
   handler: async (ctx) => {
-    const { identity } = await $authenticate(ctx);
+    const { identity } = await $requireAuth(ctx);
     return await ctx.db
       .query('tasks')
       .withIndex('by_owner', q => q.eq('owner', identity.subject))
@@ -43,21 +37,21 @@ export const getAll = query({
   },
 });
 
-export const updateCompletionStatus = mutation({
-  args: { id: v.id('tasks'), isCompleted: v.boolean() },
+export const setComplete = mutation({
+  args: { taskId: v.id('tasks'), isCompleted: v.boolean() },
   handler: async (ctx, args) => {
-    const { id, isCompleted } = args;
-    const { identity } = await $authenticate(ctx);
-    await $getOwnTask(ctx, id, identity.subject);
-    await ctx.db.patch('tasks', id, { isCompleted });
+    const { taskId, isCompleted } = args;
+    const { identity } = await $requireAuth(ctx);
+    await $requireOwnTask(ctx, taskId, identity.subject);
+    await ctx.db.patch('tasks', taskId, { isCompleted });
   },
 });
 
-export const editText = mutation({
-  args: { id: v.id('tasks'), text: v.string() },
+export const update = mutation({
+  args: { taskId: v.id('tasks'), text: v.string() },
   handler: async (ctx, args) => {
-    const { id, text } = args;
-    const { identity } = await $authenticate(ctx);
+    const { taskId, text } = args;
+    const { identity } = await $requireAuth(ctx);
     if (text.length <= 3) {
       throw new ConvexError({
         message: 'Invalid task: Task text must be longer than 3 characters',
@@ -65,26 +59,26 @@ export const editText = mutation({
         code: 422,
       });
     }
-    await $getOwnTask(ctx, id, identity.subject);
-    await ctx.db.patch('tasks', id, { text });
+    await $requireOwnTask(ctx, taskId, identity.subject);
+    await ctx.db.patch('tasks', taskId, { text });
   },
 });
 
-export const dismiss = mutation({
-  args: { id: v.id('tasks') },
+export const remove = mutation({
+  args: { taskId: v.id('tasks') },
   handler: async (ctx, args) => {
-    const { id } = args;
-    const { identity } = await $authenticate(ctx);
-    await $getOwnTask(ctx, id, identity.subject);
-    await ctx.db.delete('tasks', id);
+    const { taskId } = args;
+    const { identity } = await $requireAuth(ctx);
+    await $requireOwnTask(ctx, taskId, identity.subject);
+    await ctx.db.delete('tasks', taskId);
   },
 });
 
-export const add = mutation({
+export const create = mutation({
   args: { text: v.string() },
   handler: async (ctx, args) => {
     const { text } = args;
-    const { identity } = await $authenticate(ctx);
+    const { identity } = await $requireAuth(ctx);
     if (text.length <= 3) {
       throw new ConvexError({
         message: 'Invalid task: Task text must be longer than 3 characters',

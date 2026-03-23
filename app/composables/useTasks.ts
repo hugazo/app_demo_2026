@@ -16,10 +16,10 @@ export const TaskCountKey = Symbol() as InjectionKey<ComputedRef<number>>;
 
 // Task Handlers
 
-export type TaskDismissHandler = (args: MaybeRefOrGetter<{ id: TaskId }>) => Promise<null>;
+export type TaskDismissHandler = (args: MaybeRefOrGetter<{ taskId: TaskId }>) => Promise<null>;
 export const TaskDismissHandlerKey = Symbol() as InjectionKey<TaskDismissHandler>;
 
-export type TaskToggleHandler = (args: MaybeRefOrGetter<{ id: TaskId; isCompleted: boolean }>) => Promise<null>;
+export type TaskToggleHandler = (args: MaybeRefOrGetter<{ taskId: TaskId; isCompleted: boolean }>) => Promise<null>;
 export const TaskToggleHandlerKey = Symbol() as InjectionKey<TaskToggleHandler>;
 
 export type TaskEditStartHandler = (args: MaybeRef<{ taskId: TaskId }>) => void;
@@ -28,7 +28,7 @@ export const TaskEditStartHandlerKey = Symbol() as InjectionKey<TaskEditStartHan
 export type NewTaskHandler = () => Promise<void>;
 export const NewTaskHandlerKey = Symbol() as InjectionKey<NewTaskHandler>;
 
-export type TaskEditHandler = (args: MaybeRefOrGetter<{ id: TaskId; text: string }>) => Promise<void>;
+export type TaskEditHandler = (args: MaybeRefOrGetter<{ taskId: TaskId; text: string }>) => Promise<void>;
 export const TaskEditHandlerKey = Symbol() as InjectionKey<TaskEditHandler>;
 
 // Modal handlers
@@ -46,18 +46,18 @@ export const useTasks = () => {
   const {
     data: tasks,
     isPending,
-  } = useConvexQuery(api.tasks.getAll);
+  } = useConvexQuery(api.tasks.list);
 
   const completedTasks = computed(() => tasks.value?.filter(task => task.isCompleted) ?? []);
   const pendingTasks = computed(() => tasks.value?.filter(task => !task.isCompleted) ?? []);
   const taskCount = computed(() => tasks.value?.length ?? 0);
 
   const { mutate: handleTaskToggle } = useConvexMutation(
-    api.tasks.updateCompletionStatus,
+    api.tasks.setComplete,
   );
 
   const { mutate: handleTaskDismiss } = useConvexMutation(
-    api.tasks.dismiss,
+    api.tasks.remove,
   );
 
   const openTaskModal = ref<boolean>(false);
@@ -65,7 +65,7 @@ export const useTasks = () => {
   const taskName = ref<string>('');
   const formError = ref<string | null>(null);
 
-  const addTask = useConvexMutation(api.tasks.add);
+  const addTask = useConvexMutation(api.tasks.create);
   const handleNewTask = async () => {
     try {
       await addTask.mutate({ text: taskName.value });
@@ -91,12 +91,12 @@ export const useTasks = () => {
     openTaskModal.value = true;
   };
 
-  const { mutate: _handleTaskEdit } = useConvexMutation(api.tasks.editText);
+  const { mutate: _handleTaskEdit } = useConvexMutation(api.tasks.update);
 
-  const handleTaskEdit = async (args: MaybeRefOrGetter<{ id: TaskId; text: string }>) => {
+  const handleTaskEdit = async (args: MaybeRefOrGetter<{ taskId: TaskId; text: string }>) => {
     try {
-      const { id, text } = toValue(args);
-      await _handleTaskEdit({ id, text });
+      const { taskId, text } = toValue(args);
+      await _handleTaskEdit({ taskId, text });
       $resetForm();
     }
     catch (error) {
