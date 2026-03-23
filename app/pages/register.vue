@@ -39,6 +39,10 @@
 </template>
 
 <script setup lang="ts">
+if (process.env.NODE_ENV !== 'development') {
+  throw new Error('Developer tab should only be accessible in development environment');
+}
+
 const authClient = useAuthClient();
 
 const name = ref('');
