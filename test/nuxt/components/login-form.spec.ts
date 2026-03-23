@@ -64,7 +64,7 @@ describe('LoginForm', () => {
     });
   });
 
-  it('sends empty strings when submitted without input', async () => {
+  it('submits default empty form values when no input is provided', async () => {
     const wrapper = mountComponent();
 
     await wrapper.find('ion-button').trigger('click');

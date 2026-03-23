@@ -12,8 +12,6 @@ const tasks: Task[] = [
 
 describe('TaskList', () => {
   const mockHandleTaskToggle = vi.fn();
-  const mockHandleTaskDismiss = vi.fn();
-  const mockHandleOpenTaskModal = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -25,8 +23,8 @@ describe('TaskList', () => {
       global: {
         provide: {
           [TaskToggleHandlerKey as symbol]: mockHandleTaskToggle,
-          [TaskDismissHandlerKey as symbol]: mockHandleTaskDismiss,
-          [OpenTaskModalHandlerKey as symbol]: mockHandleOpenTaskModal,
+          [TaskDismissHandlerKey as symbol]: vi.fn(),
+          [OpenTaskModalHandlerKey as symbol]: vi.fn(),
         },
         stubs: {
           'task-dismiss-button': true,

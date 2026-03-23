@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import TaskContent from '@/components/task/content.vue';
 import { TasksPendingKey, TaskCountKey } from '@/composables/useTasks';
 
